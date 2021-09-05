@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, ViewEncapsulation, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { FormService } from '../../services/form.service';
 import { FormBuilder } from '@angular/forms';
@@ -6,11 +6,15 @@ import { User } from '../../models/user.model';
 import { Team } from '../../models/team.model';
 import { Project } from '../../models/project.model';
 import { Task } from '../../models/task.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleAddComponent } from './module-add/module-add.component';
 
 @Component({
   selector: 'app-module',
   templateUrl: './module.component.html',
-  styleUrls: ['./module.component.css']
+  styleUrls: ['./module.component.css'],
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModuleComponent implements OnInit {
   @Input('module') module: string;
@@ -21,7 +25,7 @@ export class ModuleComponent implements OnInit {
   addButtonState: string = "";
   moduleInterface: string = "";
 
-  constructor(public dataService: DataService, private formService: FormService, private fb: FormBuilder) { }
+  constructor(private modalService: NgbModal, public dataService: DataService, private formService: FormService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.moduleInterface = this.module.substring(0, this.module.length - 1);
@@ -29,14 +33,14 @@ export class ModuleComponent implements OnInit {
     this.addButtonState = `Add ${this.moduleInterface}`;
   }
 
-  toggleAddForm(){
-    this.addForm = !this.addForm;
-    this.addForm ? this.addButtonState = "Close" : this.addButtonState = `Add ${this.moduleInterface}`
+  open(){
+    const modalRef = this.modalService.open(ModuleAddComponent);
+    modalRef.componentInstance.module = this.module;
+
   }
 
-  closeForm(){
-    this.addForm = false;
-    this.addButtonState = `Add ${this.moduleInterface}`;
+  delete(id: string){
+    this.dataService.onDelete(this.module, id);
   }
 
   closeEditForm(){

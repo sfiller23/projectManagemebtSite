@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class GeneralService {
 
+  roles: string[] = ['dev','team_leader','client','customer_support','observer'];
+
   constructor() { }
 
   apiObjectToArray(res: any): any[]{

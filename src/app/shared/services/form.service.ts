@@ -1,7 +1,11 @@
 import { Injectable, EventEmitter, Renderer2 } from '@angular/core';
-import { FormArray, FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, first, map } from 'rxjs/operators';
+import { Project } from '../models/project.model';
+import { Task } from '../models/task.model';
+import { Team } from '../models/team.model';
+import { User } from '../models/user.model';
 import { DataService } from './data.service';
 
 @Injectable({
@@ -18,14 +22,45 @@ export class FormService {
 
   renderer: Renderer2;
 
+  checkedBoxArray = [];
+
   constructor(private fb: FormBuilder, private dataService: DataService) { }
 
   private update(newValue: any, key: string){
     const APIitem = {
       [key]:newValue
     }
-
+    console.log(APIitem);
     this.dataService.updateData(APIitem, this.currentModule, this.currentItem.id).pipe(first()).subscribe();
+  }
+
+  initForm(module: string){
+     switch(module) {
+      case "users": {
+         const user = new User(this.fb);
+         return user.form;
+
+      }
+      case "teams": {
+        const team = new Team(this.fb);
+        return team.form;
+
+      }
+      case "projects": {
+        const project = new Project(this.fb);
+        return project.form;
+
+     }
+      case "tasks": {
+        const task = new Task(this.fb);
+        return task.form;
+     }
+     default:{
+      const task = new Task(this.fb);
+      return task.form;
+     }
+
+   }
   }
 
 
@@ -35,11 +70,31 @@ export class FormService {
     this.formSubject.next(form);
   }
 
-  setCheckBoxes(input: HTMLInputElement, id: string, itemArray: string[]){
-    const currentItems = itemArray.includes(id);
-    if(currentItems){
-      this.renderer.setProperty(input, 'checked', 'true');
-    }
+  setCheckBoxes(itemArray: string[], formDivs: any){
+
+    console.log(formDivs);
+
+    let item: HTMLDivElement;
+
+    for(item of formDivs){
+
+      let inputs: HTMLCollectionOf<HTMLInputElement> = item.getElementsByTagName('input');
+
+
+
+      for(let i=0; i<inputs.length; i++){
+
+        if(inputs.item(i).className.includes("forEditForm")){
+          const id = inputs.item(i).id;
+          const currentItems = itemArray.includes(id);
+          if(currentItems){
+            this.renderer.setProperty(inputs.item(i), 'checked', 'true');
+          }
+        }
+      }
+
+  }
+
   }
 
   setInputs(form: FormGroup, id: string, module: string){
@@ -103,8 +158,10 @@ export class FormService {
 
       let spans: HTMLCollectionOf<HTMLSpanElement> = item.getElementsByTagName('span');
 
+
       for(let i=0; i < inputs.length; i++){
-        if(inputs.item(i)){
+        let event;
+        if(inputs.item(i) && inputs.item(i).type!=="checkbox" && inputs.item(i).type!=="radio"){
           inputs.item(i).addEventListener('focus', ()=>{
             spans.item(i).hidden = false;
             spans.item(i).firstChild.addEventListener('click', ()=>{
@@ -114,8 +171,66 @@ export class FormService {
               this.update(updatedValue, key);
             })
           })
+        }else if(inputs.item(i) && inputs.item(i).type==="checkbox"){
+
+          inputs.item(i).addEventListener("click", ()=>{
+
+            const updatedValue = inputs.item(i).id;
+            const key = inputs.item(i).value;
+
+            if(inputs.item(i).checked){
+              switch(key){
+                case "members":
+                  this.currentItem.members.push(updatedValue);
+                  this.update(this.currentItem.members, key);
+                  break;
+                case "projects":
+                  this.currentItem.projects.push(updatedValue);
+                  this.update(this.currentItem.projects, key,);
+                  break
+                case "tasks":
+                  this.currentItem.tasks.push(updatedValue);
+                  this.update(this.currentItem.tasks, key);
+                  break;
+                default:
+                  ///
+                  break;
+              }
+            }else{
+              let index;
+              switch(key){
+                case "members":
+                  index = this.currentItem.members.indexOf(updatedValue);
+                  this.currentItem.members.splice(index, 1)
+                  this.update(this.currentItem.members, key);
+                  break;
+                case "projects":
+                  index = this.currentItem.projects.indexOf(updatedValue);
+                  this.currentItem.projects.splice(index, 1)
+                  this.update(this.currentItem.projects, key);
+                  break
+                case "tasks":
+                  index = this.currentItem.tasks.indexOf(updatedValue);
+                  this.currentItem.tasks.splice(index, 1)
+                  this.update(this.currentItem.tasks, key);
+                  break;
+                default:
+                  ///
+                  break;
+              }
+            }
+
+          })
+        }else if(inputs.item(i) && inputs.item(i).type==="radio"){
+          inputs.item(i).addEventListener('click', ()=>{
+
+            const updatedValue = inputs.item(i).value;
+            const key = inputs.item(i).id;
+            this.update(updatedValue, key);
+
+          })
         }
-        //break;
+
       }
 
 
@@ -150,14 +265,32 @@ export class FormService {
   }
 
 
-  toggleBox(label: HTMLLabelElement, input: HTMLInputElement, id: string, form: FormGroup, formArray: any[]){
+  toggleBox(input: HTMLInputElement, id: string, form: FormGroup, formArray: any[]){
 
     const control = new FormControl(id);
     const currentControl = input.value;
-    const isChecked = label.toggleAttribute("checked");
+    const isChecked = input.toggleAttribute("checked");
+    const formType = input.className;
+    console.log(isChecked);
 
     if(isChecked){
         (<FormArray>form.get(`${currentControl}`)).push(control);
+        // if(formType==="forEditForm"){
+        //   switch(currentControl){
+        //     case 'projects':
+        //       this.currentItem.projects.push(id);
+        //       break;
+        //     case 'members':
+        //       this.currentItem.members.push(id);
+        //       break;
+        //     case 'tasks':
+        //       this.currentItem.tasks.push(id);
+        //       break;
+        //     default:
+        //       ///
+        //       break;
+        //   }
+        // }
     }else{
       let updatedArray = formArray.map(item=>{
         if(item !== id){
@@ -169,11 +302,25 @@ export class FormService {
           return item !== undefined;
         });
 
-        form.value.tasks = updatedArray;
+        switch(currentControl){
+          case 'members':
+            form.value.members = updatedArray;
+            break;
+          case 'projects':
+            form.value.projects = updatedArray;
+            break;
+          case 'tasks':
+            form.value.tasks = updatedArray;
+            break;
+          default:
+            ///
+            break;
+        }
+
+
 
       }
   }
-
 
 
 }

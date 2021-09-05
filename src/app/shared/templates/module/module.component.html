@@ -1,30 +1,144 @@
-<h1>{{module}}</h1>
-<button (click)="toggleAddForm()" type="button">{{addButtonState}}</button>
-<app-module-add (submited)="closeForm()" [module]="module" *ngIf="addForm"></app-module-add>
+
+<fieldset class="row">
+  <legend>{{module}}</legend>
+  <button (click)="open()" type="button" class="btn btn-primary addButton">{{addButtonState}}  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+  </svg></button>
+</fieldset>
+<!-- <app-module-add (submited)="closeForm()" [module]="module" *ngIf="addForm"></app-module-add> -->
 <app-module-details (done)="closeEditForm()" [module]="module" *ngIf="editForm"></app-module-details>
-<ul [ngSwitch]="module">
+<ng-container [ngSwitch]="module">
+
+
 
   <ng-container *ngSwitchCase="'users'">
-    <ng-container *ngFor="let user of dataService.users$ | async">
-      <li><button (click)="edit(user, 'users')" type="button">{{user.firstName}} {{user.lastName}}</button></li>
+    <div class="row cdk-virtual-scroll-data-source-example">
+    <cdk-virtual-scroll-viewport orientation="horizontal" itemSize="540" class="example-item view-users">
+    <ng-container *ngFor="let user of dataService.users$ | async" class="viewport-item">
+
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="../../../../assets/images/icon-5359553_1280.png" class="img-fluid rounded-start" alt="user photo">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h3 class="card-title"><u>{{user.firstName}} {{user.lastName}}</u></h3>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><u>Email:</u> {{user.email}}</li>
+                <li class="list-group-item"><u>Phone Number:</u> {{user.phoneNumber}}</li>
+                <li class="list-group-item"><u>Role:</u> {{user.role}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group-vertical">
+          <button (click)="edit(user, 'users')" type="button" class="btn btn-outline-primary">Edit</button>
+          <button (click)="delete(user.id)" type="button" class="btn btn-outline-danger">delete</button>
+        </div>
+
+      </div>
+
     </ng-container>
+  </cdk-virtual-scroll-viewport>
+</div>
   </ng-container>
 
   <ng-container *ngSwitchCase="'teams'">
-    <ng-container *ngFor="let team of dataService.teams$ | async">
-      <li><button (click)="edit(team, 'teams')" type="button">{{team.name}}</button></li>
+    <div class="row cdk-virtual-scroll-data-source-example">
+    <cdk-virtual-scroll-viewport orientation="horizontal" itemSize="540" class="example-item view-teams">
+    <ng-container *ngFor="let team of dataService.teams$ | async" class="viewport-item">
+
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="../../../../assets/images/icon-5359553_1280.png" class="img-fluid rounded-start" alt="user photo">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h3 class="card-title"><u>{{team.name}}</u></h3>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"> <p class="card-text"><u>description:</u> {{team.description}}</p></li>
+                <li class="list-group-item"><u>Date Created:</u> {{team.dateCreated | date}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group-vertical">
+          <button (click)="edit(team, 'teams')" type="button" class="btn btn-outline-primary">Edit</button>
+          <button (click)="delete(team.id)" type="button" class="btn btn-outline-danger">delete</button>
+        </div>
+
+      </div>
     </ng-container>
+  </cdk-virtual-scroll-viewport>
+  </div>
   </ng-container>
 
+
   <ng-container *ngSwitchCase="'projects'">
-    <ng-container *ngFor="let project of dataService.projects$ | async">
-        <li><button (click)="edit(project, 'projects')" type="button">{{project.name}}</button></li>
+    <div class="row cdk-virtual-scroll-data-source-example">
+    <cdk-virtual-scroll-viewport orientation="horizontal" itemSize="540" class="example-item view-projects">
+    <ng-container *ngFor="let project of dataService.projects$ | async" class="viewport-item">
+
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="../../../../assets/images/icon-5359553_1280.png" class="img-fluid rounded-start" alt="user photo">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h3 class="card-title"><u>{{project.name}}</u></h3>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"> <p class="card-text"><u>description:</u> {{project.description}}</p></li>
+                <li class="list-group-item"><u>Start Date:</u> {{project.startDate | date}}</li>
+                <li class="list-group-item"><u>End Date:</u> {{project.endDate | date}}</li>
+                <li class="list-group-item"><u>state:</u> <b> {{project.state}}</b></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group-vertical">
+          <button (click)="edit(project, 'projects')" type="button" class="btn btn-outline-primary">Edit</button>
+          <button (click)="delete(project.id)" type="button" class="btn btn-outline-danger">delete</button>
+        </div>
+
+      </div>
     </ng-container>
+  </cdk-virtual-scroll-viewport>
+  </div>
   </ng-container>
 
   <ng-container *ngSwitchCase="'tasks'">
-    <ng-container *ngFor="let task of dataService.tasks$ | async">
-      <li><button (click)="edit(task, 'tasks')" type="button">{{task.name}}</button></li>
+    <div class="row cdk-virtual-scroll-data-source-example">
+    <cdk-virtual-scroll-viewport orientation="horizontal" itemSize="540" class="example-item view-tasks">
+    <ng-container *ngFor="let task of dataService.tasks$ | async" class="viewport-item">
+
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="../../../../assets/images/icon-5359553_1280.png" class="img-fluid rounded-start" alt="user photo">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h3 class="card-title"><u>{{task.name}}</u></h3>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"> <p class="card-text"><u>description:</u> {{task.description}}</p></li>
+                <li class="list-group-item"><u>Start Date:</u> {{task.startDate | date}}</li>
+                <li class="list-group-item"><u>End Date:</u> {{task.endDate | date}}</li>
+                <li class="list-group-item"><u>state:</u> <b> {{task.state}}</b></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group-vertical">
+          <button (click)="edit(task, 'tasks')" type="button" class="btn btn-outline-primary">Edit</button>
+          <button (click)="delete(task.id)" type="button" class="btn btn-outline-danger">delete</button>
+        </div>
+
+      </div>
     </ng-container>
+  </cdk-virtual-scroll-viewport>
+  </div>
   </ng-container>
-</ul>

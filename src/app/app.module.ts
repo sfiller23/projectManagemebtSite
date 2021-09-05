@@ -6,6 +6,9 @@ import { AppComponent } from './app.component';
 import { NavModule } from './nav/nav.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ProfileModule } from './profile/profile.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CdkHackComponent } from './cdk-hack/cdk-hack.component';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -14,6 +17,7 @@ import { ProfileModule } from './profile/profile.module';
 @NgModule({
   declarations: [
     AppComponent,
+    CdkHackComponent,
 
   ],
   imports: [
@@ -21,6 +25,8 @@ import { ProfileModule } from './profile/profile.module';
     AppRoutingModule,
     NavModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    RouterModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

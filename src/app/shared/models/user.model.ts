@@ -12,6 +12,8 @@ export class User{
 
   form?: FormGroup;
 
+
+
   constructor(private fb?: FormBuilder){
 
     this.form = this.fb.group({
@@ -22,7 +24,11 @@ export class User{
       phoneNumber:[null,[Validators.required]],
       role:[null,[Validators.required]],
 
+
+
     })
 
   }
+
+
 }

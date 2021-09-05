@@ -24,4 +24,8 @@ export class HttpService {
   getAll(module: string){
     return this.http.get(`${environment.firebase.databaseURL}/${module}.json`);
   }
+
+  delete(module: string, id: string){
+    return this.http.delete(`${environment.firebase.databaseURL}/${module}/${id}.json`);
+  }
 }

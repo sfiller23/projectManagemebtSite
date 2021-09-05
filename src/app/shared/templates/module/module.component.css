@@ -1,0 +1,39 @@
+.card{
+  flex-direction: column;
+  display: -webkit-box;
+}
+/* .addButton{
+  width: 2rem;
+} */
+.cdk-virtual-scroll-data-source-example .example-viewport {
+  height: 200px;
+  width: 200px;
+  border: 1px solid black;
+}
+
+.cdk-virtual-scroll-data-source-example .example-viewport .cdk-virtual-scroll-content-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.cdk-virtual-scroll-data-source-example .example-item {
+  /* width: 200px; */
+  /* height: 25%; */
+  writing-mode: vertical-lr;
+}
+
+.img-fluid {
+  max-width: 138px;
+}
+.view-users{
+  min-height: 230px;
+}
+.view-teams{
+  min-height: 230px;
+}
+.view-projects{
+  min-height: 260px;
+}
+.view-tasks{
+  min-height: 270px;
+}

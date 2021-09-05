@@ -24,10 +24,7 @@
     <div>
       <label for="role">role:</label>
       <select formControlName="role" type="text" id="role">
-        <option #roleOption value="dev">Dev</option>
-        <option #roleOption value="teamLeader">TeamLeader</option>
-        <option #roleOption value="client">Client</option>
-        <option #roleOption value="customer_support">Customer_Support</option>
+        <option *ngFor="let role of this.generalService.roles" value="{{role}}">{{role}}</option>
       </select>
       <span hidden><button type="button">Save</button></span>
     </div>
@@ -49,21 +46,23 @@
       <span>{{item.dateCreated}}</span>
 
     </div>
-    <h4>Asign Members</h4>
-    <div *ngFor= "let user of dataService.users$ | async">
+    <div class="checkboxes_group">
+      <h4>Asign Members</h4>
+      <div *ngFor= "let user of dataService.users$ | async">
 
-      <input [checked]='autoCheck(memberBoxInput, user.id)' class="memberInputBox" #memberBoxInput (click)="onToggleBox(memberBoxLabel, memberBoxInput, user.id)" type="checkbox" value="members" id="{{user.id}}">
-      <label #memberBoxLabel for="{{user.id}}">{{user.firstName}} {{user.lastName}}</label>
-      <span hidden><button type="button">Save</button></span>
+        <input class="memberInputBox forEditForm" type="checkbox" value="members" id="{{user.id}}">
+        <label for="{{user.id}}">{{user.firstName}} {{user.lastName}}</label>
 
-    </div>
-    <h4>Asign Projects</h4>
-    <div *ngFor= "let project of dataService.projects$ | async">
+      </div>
+   </div>
+    <div class="checkboxes_group">
+      <h4>Asign Projects</h4>
+      <div *ngFor= "let project of dataService.projects$ | async">
 
-      <input [checked]='autoCheck(projectBoxInput, project.id)' #projectBoxInput (click)="onToggleBox(projectBoxLabel, projectBoxInput, project.id)" type="checkbox" value="projects" id="{{project.id}}">
-      <label #projectBoxLabel for="{{project.id}}">{{project.name}}</label>
-      <span hidden><button type="button">Save</button></span>
+        <input class="memberInputBox forEditForm" type="checkbox" value="projects" id="{{project.id}}">
+        <label for="{{project.id}}">{{project.name}}</label>
 
+      </div>
     </div>
   </ng-container>
   <!-- projects form: -->
@@ -88,28 +87,26 @@
       <input formControlName="endDate" type="date" id="endDate">
       <span hidden><button type="button">Save</button></span>
     </div>
-    <h4>Asign Tasks</h4>
-    <div *ngFor= "let task of dataService.tasks$ | async">
+    <div class="checkboxes_group">
+      <h4>Asign Tasks</h4>
+      <div *ngFor= "let task of dataService.tasks$ | async">
 
-      <input [checked]='autoCheck(tasksBoxInput, task.id)' #tasksBoxInput (click)="onToggleBox(tasksBoxLabel, tasksBoxInput, task.id)" type="checkbox" value="tasks" id="{{task.id}}">
-      <label #tasksBoxLabel for="{{task.id}}">{{task.name}}</label>
-      <span hidden><button type="button">Save</button></span>
+        <input class="memberInputBox forEditForm" type="checkbox" value="tasks" id="{{task.id}}">
+        <label for="{{task.id}}">{{task.name}}</label>
 
+      </div>
     </div>
     <div>
       <label for="state">In progress</label>
       <input type="radio" id="state" formControlName="state" value="inProgress">
-      <span hidden><button type="button">Save</button></span>
     </div>
     <div>
       <label for="state">Paused</label>
       <input type="radio" id="state" formControlName="state" value="paused">
-      <span hidden><button type="button">Save</button></span>
     </div>
     <div>
       <label for="state">Done</label>
       <input type="radio" id="state" formControlName="state" value="done">
-      <span hidden><button type="button">Save</button></span>
     </div>
   </ng-container>
   <!-- tasks form: -->
@@ -137,17 +134,14 @@
     <div>
       <label for="state">In progress</label>
       <input type="radio" id="state" formControlName="state" value="inProgress">
-      <span hidden><button type="button">Save</button></span>
     </div>
     <div>
       <label for="state">Paused</label>
       <input type="radio" id="state" formControlName="state" value="paused">
-      <span hidden><button type="button">Save</button></span>
     </div>
     <div>
       <label for="state">Done</label>
       <input type="radio" id="state" formControlName="state" value="done">
-      <span hidden><button type="button">Save</button></span>
     </div>
   </ng-container>
   <button (click)="onDone()">Done</button>

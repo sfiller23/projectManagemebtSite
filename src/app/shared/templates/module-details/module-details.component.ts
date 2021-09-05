@@ -21,7 +21,7 @@ export class ModuleDetailsComponent implements OnInit, AfterViewInit {
 
   editForm: FormGroup;
 
-  constructor(private ref: ElementRef ,public renderer: Renderer2 ,private formService: FormService, public dataService: DataService, private generalService: GeneralService) {
+  constructor(private ref: ElementRef ,public renderer: Renderer2 ,private formService: FormService, public dataService: DataService, public generalService: GeneralService) {
     this.formService.renderer = this.renderer;
   }
 
@@ -32,13 +32,13 @@ export class ModuleDetailsComponent implements OnInit, AfterViewInit {
 
       if(!this.editForm){
 
-        this.formService.form$.pipe(first()).subscribe(form=>{
-          this.editForm = form;
+        this.editForm = this.formService.initForm(this.module);
 
-          this.autoSetInputs();
+        this.formService.setForm(this.editForm, this.item, this.module);
+
+        this.autoSetInputs();
 
 
-        })
 
       }
     }
@@ -65,17 +65,19 @@ export class ModuleDetailsComponent implements OnInit, AfterViewInit {
 
     this.formService.toggleSaveButton(formDivs);
 
+    this.autoCheck(formDivs);
+
   }
 
-  autoCheck(input: HTMLInputElement, id: string){
+  private autoCheck(formDivs: any){
 
     switch(this.module){
       case 'teams':
-        this.formService.setCheckBoxes(input, id, this.item.members);
-        this.formService.setCheckBoxes(input, id, this.item.projects);
+        this.formService.setCheckBoxes(this.item.members, formDivs);
+        this.formService.setCheckBoxes(this.item.projects, formDivs);
         break;
       case 'projects':
-        this.formService.setCheckBoxes(input, id, this.item.tasks);
+        this.formService.setCheckBoxes(this.item.tasks, formDivs);
         break;
       default:
         ///
@@ -93,7 +95,7 @@ export class ModuleDetailsComponent implements OnInit, AfterViewInit {
     this.done.emit();
   }
 
-  onToggleBox(label: HTMLLabelElement, input: HTMLInputElement, id: string){
+  onToggleBox(input: HTMLInputElement, id: string){
     let inputValue;
     switch(input.value) {
       case "projects": {
@@ -113,8 +115,9 @@ export class ModuleDetailsComponent implements OnInit, AfterViewInit {
         break;
       }
    }
-    this.formService.toggleBox(label, input, id, this.editForm, inputValue);
+    this.formService.toggleBox(input, id, this.editForm, inputValue);
   }
+
 
 
 }

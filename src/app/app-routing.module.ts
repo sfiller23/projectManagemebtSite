@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CdkHackComponent } from './cdk-hack/cdk-hack.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'overview', pathMatch: 'full'},

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { GeneralService } from './general.service';
 import { HttpService } from './http.service';
 import { User } from '../models/user.model';
 import { Team } from '../models/team.model';
 import { Task } from '../models/task.model';
 import { Project } from '../models/project.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class DataService {
   private tasksSubject = new BehaviorSubject<Task[]>(null);
   tasks$: Observable<Task[]> = this.tasksSubject.asObservable();
 
-  constructor(private http: HttpService, private generalService: GeneralService) {
+  constructor(private router: Router ,private http: HttpService, private generalService: GeneralService) {
 
   }
 
@@ -58,6 +59,7 @@ export class DataService {
   }
 
   addData(data: any, module: string){
+
     this.http.add(data, module).subscribe(res=>{
       const currentData = {
         id: res.name, ...data
@@ -93,17 +95,23 @@ export class DataService {
      }
     }
 
-    const itemToUpdate = currentData.filter(item=>item.id==id);
+    let itemToUpdate;
 
-    for(let field in itemToUpdate[0]){
-      if(data.hasOwnProperty(field)){
-        itemToUpdate[0][field] = data[field];
+      itemToUpdate = currentData.filter(item=>item.id==id);
+
+      for(var field in itemToUpdate[0]){
+        if(data.hasOwnProperty(field)){
+          itemToUpdate[0][field] = data[field];
+        }
       }
-    }
+
 
     let updatedArray = currentData.filter(item=>item.id!=id);
 
-    updatedArray.push(itemToUpdate[0]);
+
+      updatedArray.push(itemToUpdate[0]);
+
+
 
     //console.log(updatedDataArrey);
     this.initData(module, updatedArray);
@@ -124,28 +132,28 @@ export class DataService {
       case "users": {
         let currentUsers: User[] = this.usersSubject.getValue();
         currentUsers ? currentUsers : currentUsers = [];
-        currentUsers.push(currentData);
+        currentUsers.unshift(currentData);
         this.usersSubject.next(currentUsers);
         break;
       }
       case "teams": {
         let currentTeams: Team[] = this.teamsSubject.getValue();
         currentTeams ? currentTeams : currentTeams = [];
-        currentTeams.push(currentData);
+        currentTeams.unshift(currentData);
         this.teamsSubject.next(currentTeams);
         break;
       }
       case "projects": {
         let currentProjects: Project[] = this.projectsSubject.getValue();
         currentProjects ? currentProjects : currentProjects = [];
-        currentProjects.push(currentData);
+        currentProjects.unshift(currentData);
         this.projectsSubject.next(currentProjects);
         break;
       }
       case "tasks": {
         let currentTasks: Task[] = this.tasksSubject.getValue();
         currentTasks ? currentTasks : currentTasks = [];
-        currentTasks.push(currentData);
+        currentTasks.unshift(currentData);
         this.tasksSubject.next(currentTasks);
         break;
       }
@@ -155,5 +163,44 @@ export class DataService {
       }
    }
 
+  }
+
+  onDelete(module: string, id: string){
+
+    switch(module){
+      case "users": {
+        let currentUsers: User[] = this.usersSubject.getValue();
+        currentUsers ? currentUsers : currentUsers = [];
+        const updatedUsers = currentUsers.filter(user=>user.id!==id);
+        this.usersSubject.next(updatedUsers);
+        break;
+      }
+      case "teams": {
+        let currentTeams: Team[] = this.teamsSubject.getValue();
+        currentTeams ? currentTeams : currentTeams = [];
+        const updatedTeams = currentTeams.filter(team=>team.id!==id);
+        this.teamsSubject.next(updatedTeams);
+        break;
+      }
+      case "projects": {
+        let currentProjects: Project[] = this.projectsSubject.getValue();
+        currentProjects ? currentProjects : currentProjects = [];
+        const updatedProjects = currentProjects.filter(project=>project.id!==id);
+        this.projectsSubject.next(updatedProjects);
+        break;
+      }
+      case "tasks": {
+        let currentTasks: Task[] = this.tasksSubject.getValue();
+        currentTasks ? currentTasks : currentTasks = [];
+        const updatedTasks = currentTasks.filter(user=>user.id!==id);
+        this.tasksSubject.next(updatedTasks);
+        break;
+      }
+      default: {
+         //statements;
+         break;
+      }
+    }
+    this.http.delete(module, id).pipe(first()).subscribe();
   }
 }

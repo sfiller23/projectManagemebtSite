@@ -6,6 +6,10 @@ import { User } from 'src/app/shared/models/user.model';
 import { FormService } from 'src/app/shared/services/form.service';
 import { DataService } from '../../../services/data.service';
 import { Team } from '../../../models/team.model';
+import { GeneralService } from '../../../services/general.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-module-add',
@@ -14,49 +18,29 @@ import { Team } from '../../../models/team.model';
 })
 export class ModuleAddComponent implements OnInit {
   @Input('module') module: string;
-  @Output('submited') submited: EventEmitter<string> = new EventEmitter<'submited'>();
+
 
   addForm: FormGroup;
 
-  constructor(private formService: FormService, private fb: FormBuilder, public dataService: DataService) { }
+  constructor(private router: Router,public activeModal: NgbActiveModal, public generalService: GeneralService,private formService: FormService, private fb: FormBuilder, public dataService: DataService) { }
 
   ngOnInit(): void {
-    switch(this.module) {
-      case "users": {
-         const user = new User(this.fb);
-         this.addForm = user.form;
-         break;
-      }
-      case "teams": {
-        const team = new Team(this.fb);
-        this.addForm = team.form;
-         break;
-      }
-      case "projects": {
-        const project = new Project(this.fb);
-        this.addForm = project.form;
-        break;
-     }
-      case "tasks": {
-        const task = new Task(this.fb);
-        this.addForm = task.form;
-        break;
-     }
-      default: {
-         //statements;
-         break;
-      }
-   }
+
+    this.addForm = this.formService.initForm(this.module);
+
   }
 
   onSubmit(){
+    this.activeModal.close();
     console.log(this.addForm.value);
     this.dataService.addData(this.addForm.value, this.module);
     this.addForm.reset();
-    this.submited.emit();
+    //location.reload();
+
+
   }
 
-  onToggleBox(label: HTMLLabelElement, input: HTMLInputElement, id: string){
+  onToggleBox(input: HTMLInputElement, id: string){
     let inputValue;
     switch(input.value) {
       case "projects": {
@@ -76,7 +60,7 @@ export class ModuleAddComponent implements OnInit {
         break;
       }
    }
-    this.formService.toggleBox(label, input, id, this.addForm, inputValue);
+    this.formService.toggleBox(input, id, this.addForm, inputValue);
   }
 
 }

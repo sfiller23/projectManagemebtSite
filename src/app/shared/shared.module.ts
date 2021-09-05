@@ -5,7 +5,8 @@ import { ModuleAddComponent } from './templates/module/module-add/module-add.com
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModuleDetailsComponent } from './templates/module-details/module-details.component';
 import { FormService } from './services/form.service';
-import { AutoCheckBoxSetDirective } from './directives/auto-check-box-set.directive';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -14,15 +15,17 @@ import { AutoCheckBoxSetDirective } from './directives/auto-check-box-set.direct
     ModuleComponent,
     ModuleAddComponent,
     ModuleDetailsComponent,
-    AutoCheckBoxSetDirective
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    ScrollingModule,
+    RouterModule,
   ],
   exports:[
-    ModuleComponent
+    ModuleComponent,
+    ModuleAddComponent,
   ],
   providers:[
     FormService,
