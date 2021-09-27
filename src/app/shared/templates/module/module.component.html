@@ -10,8 +10,6 @@
 <app-module-details (done)="closeEditForm()" [module]="module" *ngIf="editForm"></app-module-details>
 <ng-container [ngSwitch]="module">
 
-
-
   <ng-container *ngSwitchCase="'users'">
     <div class="row cdk-virtual-scroll-data-source-example">
     <cdk-virtual-scroll-viewport orientation="horizontal" itemSize="540" class="example-item view-users">
@@ -37,9 +35,7 @@
           <button (click)="edit(user, 'users')" type="button" class="btn btn-outline-primary">Edit</button>
           <button (click)="delete(user.id)" type="button" class="btn btn-outline-danger">delete</button>
         </div>
-
       </div>
-
     </ng-container>
   </cdk-virtual-scroll-viewport>
 </div>
@@ -114,28 +110,28 @@
     <div class="row cdk-virtual-scroll-data-source-example">
     <cdk-virtual-scroll-viewport orientation="horizontal" itemSize="540" class="example-item view-tasks">
     <ng-container *ngFor="let task of dataService.tasks$ | async" class="viewport-item">
-
       <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <img src="../../../../assets/images/icon-5359553_1280.png" class="img-fluid rounded-start" alt="user photo">
           </div>
-          <div class="col-md-8">
+          <div class="col-md-7">
             <div class="card-body">
-              <h3 class="card-title"><u>{{task.name}}</u></h3>
+              <h2 class="card-title"><u>{{task.name}}</u></h2>
               <ul class="list-group list-group-flush">
                 <li class="list-group-item"> <p class="card-text"><u>description:</u> {{task.description}}</p></li>
-                <li class="list-group-item"><u>Start Date:</u> {{task.startDate | date}}</li>
-                <li class="list-group-item"><u>End Date:</u> {{task.endDate | date}}</li>
+                <li class="list-group-item"><u>Start Date:</u> {{task.startDate}}</li>
+                <li class="list-group-item"><u>End Date:</u> {{task.endDate}}</li>
                 <li class="list-group-item"><u>state:</u> <b> {{task.state}}</b></li>
               </ul>
             </div>
           </div>
+          <div class="btn-group-vertical col-md-2">
+            <button (click)="edit(task, 'tasks')" type="button" class="btn btn-outline-primary">Edit</button>
+            <button (click)="delete(task.id)" type="button" class="btn btn-outline-danger">delete</button>
+          </div>
         </div>
-        <div class="btn-group-vertical">
-          <button (click)="edit(task, 'tasks')" type="button" class="btn btn-outline-primary">Edit</button>
-          <button (click)="delete(task.id)" type="button" class="btn btn-outline-danger">delete</button>
-        </div>
+
 
       </div>
     </ng-container>

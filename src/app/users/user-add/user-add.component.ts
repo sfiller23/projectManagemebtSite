@@ -24,7 +24,7 @@ export class UserAddComponent implements OnInit {
   }
 
   onSubmit(){
-    this.dataService.addData(this.addUserForm.value, "users");
+   // this.dataService.addData(this.addUserForm.value, "users");
   }
 
 }

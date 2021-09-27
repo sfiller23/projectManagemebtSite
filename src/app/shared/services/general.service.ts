@@ -10,7 +10,7 @@ export class GeneralService {
   constructor() { }
 
   apiObjectToArray(res: any): any[]{
-
+    console.log(res);
     const postsArray = [];
     for(const key in res){
       if(res.hasOwnProperty(key)){
@@ -19,4 +19,14 @@ export class GeneralService {
     }
     return postsArray;
   }
+
+  apiObjectToModelArray(results)  {
+    return <any[]> results.docs.map(snap => {
+        return {
+            id: snap.id,
+            ...<any>snap.data()
+        }
+    })
+
+}
 }

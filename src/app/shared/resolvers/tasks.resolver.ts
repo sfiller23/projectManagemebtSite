@@ -21,6 +21,7 @@ export class TasksResolver implements Resolve<boolean> {
     this.dataService.tasks$.pipe(first()).subscribe(tasks=>{
       if(!tasks){
         this.dataService.getAll("tasks").subscribe(res=>{
+          console.log(res);
           const currentTasks: Task[] = res;
           console.log("Tasks resolver");
           this.dataService.initData("tasks", currentTasks);

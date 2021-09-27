@@ -9,6 +9,7 @@ import { Team } from '../../../models/team.model';
 import { GeneralService } from '../../../services/general.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 
 @Component({
@@ -18,22 +19,25 @@ import { Router } from '@angular/router';
 })
 export class ModuleAddComponent implements OnInit {
   @Input('module') module: string;
+  moduleId: string;
 
 
   addForm: FormGroup;
 
-  constructor(private router: Router,public activeModal: NgbActiveModal, public generalService: GeneralService,private formService: FormService, private fb: FormBuilder, public dataService: DataService) { }
+  constructor(private afs: AngularFirestore ,private router: Router,public activeModal: NgbActiveModal, public generalService: GeneralService,private formService: FormService, private fb: FormBuilder, public dataService: DataService) { }
 
   ngOnInit(): void {
 
     this.addForm = this.formService.initForm(this.module);
+    this.moduleId = this.afs.createId();
+
 
   }
 
   onSubmit(){
     this.activeModal.close();
     console.log(this.addForm.value);
-    this.dataService.addData(this.addForm.value, this.module);
+    this.dataService.addData(this.addForm.value, this.module, this.moduleId);
     this.addForm.reset();
     //location.reload();
 

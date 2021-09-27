@@ -1,12 +1,14 @@
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import firebase from 'firebase/app';
+import Timestamp = firebase.firestore.Timestamp;
 
 
 export class Task{
   id: string;
   name: string;
   description: string;
-  startDate: string;
-  endDate: string;
+  startDate: Timestamp;
+  endDate: Timestamp;
   state: string;
 
   form?: FormGroup

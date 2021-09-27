@@ -8,6 +8,8 @@ import { Team } from '../models/team.model';
 import { Task } from '../models/task.model';
 import { Project } from '../models/project.model';
 import { Router } from '@angular/router';
+import firebase from 'firebase/app';
+import Timestamp = firebase.firestore.Timestamp;
 
 @Injectable({
   providedIn: 'root'
@@ -58,16 +60,21 @@ export class DataService {
     }
   }
 
-  addData(data: any, module: string){
+  addData(data: any, module: string, itemId: string){
+    if(data.startDate){
+      data.startDate = Timestamp.fromDate(new Date(data.startDate));
+    }
+    if(data.endDate){
+      data.endDate = Timestamp.fromDate(new Date(data.endDate));
+    }
 
-    this.http.add(data, module).subscribe(res=>{
-      const currentData = {
-        id: res.name, ...data
-      }
+    const currentData = {
+      id: itemId, ...data
+    }
 
-      this.pushData(module, currentData);
+    this.pushData(module, currentData);
 
-    })
+    this.http.add(data, module, itemId).subscribe();
   }
 
   updateData(data: any, module: string, id: string){
@@ -105,21 +112,15 @@ export class DataService {
         }
       }
 
-
     let updatedArray = currentData.filter(item=>item.id!=id);
-
-
       updatedArray.push(itemToUpdate[0]);
 
-
-
-    //console.log(updatedDataArrey);
     this.initData(module, updatedArray);
     return this.http.update(data, module, id);
   }
 
   getAll(module: string){
-    return this.http.getAll(module).pipe(map(res=>this.generalService.apiObjectToArray(res)));
+    return this.http.getAll(module).pipe(map(res=>this.generalService.apiObjectToModelArray(res)))
   }
 
   getItemData(module: string, id: string){
